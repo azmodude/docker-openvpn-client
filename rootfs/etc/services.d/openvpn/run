@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv /bin/bash
+set -e
+
+if [[ "${OPENVPN_CONFIG}" ]]; then
+    echo "starting openvpn with config: '${OPENVPN_CONFIG}'"
+    exec openvpn --config "/etc/openvpn/config/${OPENVPN_CONFIG}"
+else
+    echo "no OPENVPN_CONFIG environment variable defined, exiting"
+    exit 1
+fi

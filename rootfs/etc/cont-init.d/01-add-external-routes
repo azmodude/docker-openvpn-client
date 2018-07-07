@@ -1,0 +1,16 @@
+#!/usr/bin/with-contenv /bin/bash
+#
+# Add routes for defined external networks so they don't get routed over the
+# VPN
+
+# sets $OPENVPN_PHYSICAL_INTERFACE (the eth interface of the openvpn-client)
+source /bin/determine-openvpn-network-interface
+
+# we assume first ip is the gateway
+DOCKER_NETWORK_GATEWAY=$(ipcalc ${OPENVPN_DOCKER_NETWORK} -n -b | grep HostMin | \
+    cut -d':' -f 2 | awk '{$1=$1;print}') # final awks trims whitespace
+>&2 echo "Using ${DOCKER_NETWORK_GATEWAY} as default gateway for allowed networks"
+# allow additional networks
+for allowed_range in ${OPENVPN_ALLOWED_EXTERNAL_NETWORKS}; do
+    ip route add ${allowed_range} via ${DOCKER_NETWORK_GATEWAY} dev ${OPENVPN_PHYSICAL_INTERFACE}
+done

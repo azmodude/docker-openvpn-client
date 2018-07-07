@@ -1,0 +1,43 @@
+version: '3.3'
+
+services:
+  openvpn-client:
+    image: azmo/openvpn-client
+    hostname: openvpn-client
+    environment:
+      OPENVPN_CONFIG: ${OPENVPN_CONFIG}
+      OPENVPN_NETWORK_INTERFACE: ${OPENVPN_NETWORK_INTERFACE}
+      OPENVPN_DOCKER_NETWORK: ${OPENVPN_DOCKER_NETWORK}
+      OPENVPN_ALLOWED_DOCKER_NETWORKS: ${OPENVPN_ALLOWED_DOCKER_NETWORKS}
+      OPENVPN_ALLOWED_EXTERNAL_NETWORKS: ${OPENVPN_ALLOWED_EXTERNAL_NETWORKS}
+      OPENVPN_HEALTHY_IP: ${OPENVPN_NAMESERVER}
+    dns:
+      - ${OPENVPN_NAMESERVER:-8.8.8.8}
+    healthcheck:
+      test: /etc/services.d/openvpn/healthcheck
+      interval: '60s'
+      retries: 3
+      timeout: '30s'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${OPENVPN_CONFIG_DIRECTORY:-./config}:/etc/openvpn/config:ro
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    networks:
+      - openvpn-client
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100k"
+        max-file: "20"
+
+# create our own network other service-clients can attach to
+networks:
+  openvpn-client:
+    ipam:
+      driver: default
+      config:
+        - subnet: ${OPENVPN_DOCKER_NETWORK}

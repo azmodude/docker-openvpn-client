@@ -1,0 +1,7 @@
+#!/usr/bin/with-contenv /bin/bash
+
+# get dockers container interface to the vpn network
+# we cannot rely on eth0 because other networks might be connected
+export OPENVPN_PHYSICAL_INTERFACE=$(ip -o route get ${OPENVPN_DOCKER_NETWORK} | awk '{ print $4 }')
+
+>&2 echo "Using $OPENVPN_PHYSICAL_INTERFACE as VPN physical interface"

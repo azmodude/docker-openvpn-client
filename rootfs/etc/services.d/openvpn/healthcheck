@@ -1,0 +1,3 @@
+#!/usr/bin/with-contenv /bin/bash
+
+ping -q -c 3 "${OPENVPN_HEALTHY_IP}"
