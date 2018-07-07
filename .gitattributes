@@ -1,2 +1,0 @@
-config/airvpn/*.ovpn filter=git-crypt diff=git-crypt
-config/ovpn.to/*.ovpn filter=git-crypt diff=git-crypt
