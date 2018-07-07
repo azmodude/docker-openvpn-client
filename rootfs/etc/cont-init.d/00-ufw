@@ -38,8 +38,8 @@ for ovpn_remote in "${!ovpn_servers[@]}"; do
     ufw allow out on "${OPENVPN_PHYSICAL_INTERFACE}" to "${ovpn_remote}" port 443
 done
 # also allow anything on tunnel interface
-ufw allow in on "${OPENVPN_NETWORK_INTERFACE}" from 0.0.0.0/0 to any
-ufw allow out on "${OPENVPN_NETWORK_INTERFACE}" from any to 0.0.0.0/0
+ufw allow in on tun0 from 0.0.0.0/0 to any
+ufw allow out on tun0 from any to 0.0.0.0/0
 
 # allow communication on the docker network
 ufw allow from "${OPENVPN_DOCKER_NETWORK}"
