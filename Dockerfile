@@ -1,4 +1,4 @@
-FROM azmo/base:debian-slim
+FROM azmo/base:ubuntu-latest
 LABEL maintainer "Gordon Schulz <gordon.schulz@gmail.com>"
 
 RUN apt-get update && apt-get -y --no-install-recommends install openvpn \
