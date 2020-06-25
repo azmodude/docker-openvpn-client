@@ -6,6 +6,7 @@ services:
       context: .
     image: azmo/openvpn-client
     hostname: openvpn-client
+    container_name: openvpn-client
     environment:
       OPENVPN_CONFIG: ${OPENVPN_CONFIG}
       OPENVPN_DOCKER_NETWORK: ${OPENVPN_DOCKER_NETWORK}
