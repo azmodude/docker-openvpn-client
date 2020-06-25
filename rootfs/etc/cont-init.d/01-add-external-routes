@@ -5,7 +5,7 @@
 # VPN
 
 # sets $OPENVPN_PHYSICAL_INTERFACE (the eth interface of the openvpn-client)
-source /bin/determine-openvpn-network-interface
+source /usr/bin/determine-openvpn-network-interface
 
 # we assume first ip is the gateway
 DOCKER_NETWORK_GATEWAY=$(ipcalc "${OPENVPN_DOCKER_NETWORK}" -n -b | grep HostMin | \

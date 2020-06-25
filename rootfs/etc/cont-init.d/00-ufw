@@ -11,7 +11,7 @@
 declare -A ovpn_servers
 
 # sets $OPENVPN_PHYSICAL_INTERFACE (the eth interface of the openvpn-client)
-source /bin/determine-openvpn-network-interface
+source /usr/bin/determine-openvpn-network-interface
 
 OPENVPN_NETWORK_GATEWAY=$(ipcalc "${OPENVPN_DOCKER_NETWORK}" -n -b | \
     grep HostMin | cut -d':' -f 2 | awk '{$1=$1;print}') # final awks trims whitespace
