@@ -3,8 +3,11 @@
 
 # get dockers container interface to the vpn network
 # we cannot rely on eth0 because other networks might be connected
+
+IFS='/' read -r network mask <<<"${OPENVPN_DOCKER_NETWORK}"
+
 export OPENVPN_PHYSICAL_INTERFACE
-OPENVPN_PHYSICAL_INTERFACE=$(ip -o route get "${OPENVPN_DOCKER_NETWORK}" | \
+OPENVPN_PHYSICAL_INTERFACE=$(ip -o route get "${network}" | \
     awk '{ print $4 }')
 
 >&2 echo "Using $OPENVPN_PHYSICAL_INTERFACE as VPN physical interface"
