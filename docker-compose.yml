@@ -2,6 +2,8 @@ version: '2.1'
 
 services:
   openvpn-client:
+    build:
+      context: .
     image: azmo/openvpn-client
     hostname: openvpn-client
     environment:
