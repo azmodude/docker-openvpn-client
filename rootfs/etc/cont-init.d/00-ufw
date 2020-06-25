@@ -1,4 +1,5 @@
 #!/usr/bin/with-contenv /bin/bash
+# vim: set ft=sh:
 
 # Completely lock down a container/host using ufw.
 # By default deny everything and allow only outbound ips and ports read from
@@ -12,11 +13,12 @@ declare -A ovpn_servers
 # sets $OPENVPN_PHYSICAL_INTERFACE (the eth interface of the openvpn-client)
 source /bin/determine-openvpn-network-interface
 
-OPENVPN_NETWORK_GATEWAY=$(ipcalc ${OPENVPN_DOCKER_NETWORK} -n -b | grep HostMin | \
-    cut -d':' -f 2 | awk '{$1=$1;print}') # final awks trims whitespace
+OPENVPN_NETWORK_GATEWAY=$(ipcalc "${OPENVPN_DOCKER_NETWORK}" -n -b | \
+    grep HostMin | cut -d':' -f 2 | awk '{$1=$1;print}') # final awks trims whitespace
 >&2 echo "Setting ${OPENVPN_NETWORK_GATEWAY} as default gateway"
 ip route del default
-ip route add default via ${OPENVPN_NETWORK_GATEWAY} dev $OPENVPN_PHYSICAL_INTERFACE
+ip route add default via "${OPENVPN_NETWORK_GATEWAY}" \
+    dev "${OPENVPN_PHYSICAL_INTERFACE}"
 
 # deny everything by default
 ufw default deny outgoing
@@ -27,9 +29,10 @@ ufw default deny incoming
 while read -r ovpn_remote; do
     remote=$(echo "${ovpn_remote}" | cut -d ' ' -f 2)
     port=$(echo "${ovpn_remote}" | cut -d ' ' -f 3)
-    [[ -n "${remote}" ]] && [[ -n "${port}" ]] && ovpn_servers["${remote}"]="${port}"
-done <<< $(find /etc/openvpn/config -name "*.ovpn" \
-    -exec grep -Eh "remote [0-9]+\." {} \;)
+    [[ -n "${remote}" ]] && [[ -n "${port}" ]] && \
+        ovpn_servers["${remote}"]="${port}"
+done <<< "$(find /etc/openvpn/config -name '*.ovpn' \
+            -exec grep -Eh 'remote [0-9]+\.' {} \;)"
 
 # allow traffic in and out to remotes
 for ovpn_remote in "${!ovpn_servers[@]}"; do
@@ -47,9 +50,9 @@ ufw allow from "${OPENVPN_DOCKER_NETWORK}"
 for allowed_range in ${OPENVPN_ALLOWED_EXTERNAL_NETWORKS} ${OPENVPN_ALLOWED_DOCKER_NETWORKS}; do
     # check if we are routing over a docker network to correctly set interface
     # for ufw to allow
-    GATEWAY=$(ipcalc ${allowed_range} -n -b | grep HostMin | \
+    GATEWAY=$(ipcalc "${allowed_range}" -n -b | grep HostMin | \
     cut -d':' -f 2 | awk '{$1=$1;print}') # final awks trims whitespace
-    DIRECTLY_CONNECTED_INTERFACE=$(ip -o route get ${GATEWAY} | \
+    DIRECTLY_CONNECTED_INTERFACE=$(ip -o route get "${GATEWAY}" | \
         awk '{print $3}')
     if [[ "${DIRECTLY_CONNECTED_INTERFACE}" =~ 'eth' ]]; then
         ALLOWED_INTERFACE=${DIRECTLY_CONNECTED_INTERFACE}
