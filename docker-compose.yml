@@ -1,4 +1,4 @@
-version: '3'
+version: '2.1'
 
 services:
   openvpn-client:
@@ -33,7 +33,7 @@ services:
         max-size: "100k"
         max-file: "20"
 
-# create our own network other service-clients can attach to
+# create our own network for other service-clients to attach to
 networks:
   openvpn-client:
     ipam:
