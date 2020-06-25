@@ -9,5 +9,5 @@ RUN set -vx && \
         apt-get clean && \
         rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ADD rootfs /
+COPY ./rootfs /
 VOLUME /etc/openvpn/config
